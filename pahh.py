@@ -1,14 +1,4 @@
 #!/usr/bin/python
-#Copyright (c) 2012, Eng Eder de Souza
-#Accessing the Google API for speech recognition With Asterisk!
-#Eng Eder de Souza
-#date 15/01/2012
-#http://ederwander.wordpress.com/2012/01/16/google-speech-python-asterisk/
-#
-# This program is free software, distributed under the terms of
-# the GNU General Public License Version 2. See the COPYING file
-# at the top of the source tree.
-#
 import scikits.audiolab as audiolab
 from matplotlib.mlab import find
 from tempfile import mkstemp
@@ -29,18 +19,16 @@ Lang="pt-BR"
 
 url = 'https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang='+Lang
 
-rms2=0;
+
 silence=True
 env = {}
 RawRate=8000
 chunk=1024
+rms2=0
 
 #http://en.wikipedia.org/wiki/Vocal_range
 #Assuming Vocal Range Frequency upper than 75 Hz
 VocalRange = 75.0
-
-
-#cd, FileNameTmp    = mkstemp('TmpSpeechFile.flac')
 
 
 #Assuming Energy threshold upper than 15 dB
@@ -98,25 +86,26 @@ for key in env.keys():
 
 def SendSpeech(File):
 	flac=open(File,"rb").read()
+	os.remove(File)
 	header = {'Content-Type' : 'audio/x-flac; rate=8000'}
 	req = urllib2.Request(url, flac, header)
 	data = urllib2.urlopen(req)
 	#sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" + "You Said ..." + "\" " + "\n")
         #sys.stdout.flush()
 	find = re.findall('"utterance":(.*),', data.read())
-	result = find[0].replace('"', '')
-	#utterance
-	os.remove(File)
 	try:
-		print find[0]
+		result = find[0].replace('"', '')
+	except:
+		sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" + "speech not recognized ..." + "\" " + "\n")
+                sys.stdout.flush()	
+	#utterance
+	if result:		
 		sys.stdout.write('SET VARIABLE GoogleUtterance "%s"\n'% str(result))
 		sys.stdout.flush()
 		sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" "%s \n"% str(result))
 		sys.stdout.flush()
-	except:
-		sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" + "speech not recognized ..." + "\" " + "\n")
-        	sys.stdout.flush()
 
+	#os.remove(File)
 def Filter(samps):
 	FC = 0.05/(0.5*RawRate)
         N = 200
@@ -131,7 +120,7 @@ def Pitch(signal):
 	return f0;
 
 def rms(shorts):
-	global rms2 
+	global rms2
 	count = len(shorts)/2
     	sum_squares = 0.0
     	for sample in shorts:
@@ -208,6 +197,12 @@ while silence:
 	samps2=Filter(samps)
 	Frequency=Pitch(samps2)
 	rms_value=rms(samps)
+	#sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" +" % ""\" " + "\n"% str(Frequency))
+	#sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" +  %s + "\" " + "\n"% str(Frequency))
+	#sys.stdout.write("EXEC NOOP %s \"\"\"\n"% str(Frequency))	
+	#sys.stdout.write("EXEC NOOP %s --- %s\"\"\"\n" %(str(rms_value), str(Frequency)))	
+	#sys.stdout.flush()
+
 	signal = signal + chunk;	
 	if (rms_value > Threshold) and (Frequency > VocalRange):
 		silence=False
@@ -229,7 +224,6 @@ array = np.array(all)
 
 fmt         = audiolab.Format('flac', 'pcm16')
 nchannels   = 1
-
 
 cd, FileNameTmp    = mkstemp('TmpSpeechFile.flac')
 
