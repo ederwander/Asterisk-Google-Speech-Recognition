@@ -29,21 +29,21 @@ Lang="pt-BR"
 
 url = 'https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang='+Lang
 
-
+rms2=0;
 silence=True
 env = {}
 RawRate=8000
 chunk=1024
 
 #http://en.wikipedia.org/wiki/Vocal_range
-#Assuming Vocal Range Frequency upper than 80 Hz
+#Assuming Vocal Range Frequency upper than 75 Hz
 VocalRange = 75.0
 
 
-cd, FileNameTmp    = mkstemp('TmpSpeechFile.flac')
+#cd, FileNameTmp    = mkstemp('TmpSpeechFile.flac')
 
 
-#Assuming Energy threshold upper than 20 dB
+#Assuming Energy threshold upper than 15 dB
 Threshold = 15
 
 #10 seconds x 16000 samples/second x ( 16 bits / 8bits/byte ) = 160000 bytes
@@ -131,13 +131,14 @@ def Pitch(signal):
 	return f0;
 
 def rms(shorts):
+	global rms2 
 	count = len(shorts)/2
     	sum_squares = 0.0
     	for sample in shorts:
         	n = sample * SHORT_NORMALIZE
         	sum_squares += n*n
-		rms = math.pow(sum_squares/count,0.5);
-	return rms * 1000
+		rms2 = math.pow(sum_squares/count,0.5);
+	return rms2 * 1000
 
 def speaking(data):
 	rms_value = rms(data) 
@@ -217,7 +218,7 @@ while silence:
 	if (signal > TimeoutSignal):
 		sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" + "Time Out No Speech Detected ..." + "\" " + "\n")	
 		sys.stdout.flush()
-		os.remove(FileNameTmp)
+		#os.remove(FileNameTmp)
 		sys.exit()
 
 RecordSpeech(TimeoutSignal, LastBlock, LastLastBlock)
@@ -228,6 +229,9 @@ array = np.array(all)
 
 fmt         = audiolab.Format('flac', 'pcm16')
 nchannels   = 1
+
+
+cd, FileNameTmp    = mkstemp('TmpSpeechFile.flac')
 
 # making the file .flac
 afile =  audiolab.Sndfile(FileNameTmp, 'w', fmt, nchannels, RawRate)
