@@ -106,6 +106,7 @@ for key in env.keys():
 
 
 def SendSpeech(File):
+        result=''
         flac=open(File,"rb").read()
         os.remove(File)
         header = {'Content-Type' : 'audio/x-flac; rate=8000'}
