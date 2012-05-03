@@ -1,5 +1,8 @@
-Dependencies:
+Automatic Speech Recognition (ASR) For Asterisk using Google Speech !
 
+This EAGI use the File Descriptor to get the audio in realtime and perform one simple VAD analise in the signal ... 
+
+Dependencies:
 
 flac >= 1.2.1
 libflac-dev >= 1.2.1
