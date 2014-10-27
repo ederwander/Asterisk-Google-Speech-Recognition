@@ -15,6 +15,7 @@
 #19/01/2012 suport for old python interpretator
 #19/01/2012 removed matplotlib dependencies
 #19/01/2012 Submission of warnings DeprecationWarning and UserWarning
+#27/10/2014 Update to Google speech-api v2
 
 import warnings
 warnings.simplefilter("ignore", DeprecationWarning)
