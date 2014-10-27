@@ -37,7 +37,11 @@ Lang="pt-BR"
 #or for English Speech Recognizer
 #Lang="en-US"
 
-url = 'https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang='+Lang
+#olg google speech V1 not working
+#url = 'https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang='+Lang
+
+#NOw for google speech V2
+url='https://www.google.com/speech-api/v2/recognize?output=json&key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw&lang=+Lang'
 
 
 silence=True
@@ -112,14 +116,18 @@ def SendSpeech(File):
         header = {'Content-Type' : 'audio/x-flac; rate=8000'}
         req = urllib2.Request(url, flac, header)
         data = urllib2.urlopen(req)
-        find = re.findall('"utterance":(.*),', data.read())
+        #find = re.findall('"utterance":(.*),', data.read())
+        find= re.findall('{"transcript":(.*)},', data.read())
         #utterance
         try:
-                result = find[0].replace('"', '')
+                #result = find[0].replace('"', '')
+                result = find[0].replace('{"transcript":', '')
         except:
                 sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" + "speech not recognized ..." + "\" " + "\n")
                 sys.stdout.flush()
         if result:
+                test=result.split('},')
+                result=test[len(test)-1].replace('"', '')
                 sys.stdout.write('SET VARIABLE GoogleUtterance "%s"\n'% str(result))
                 sys.stdout.flush()
                 sys.stdout.write("EXEC " + "\"" + "NOOP" + "\" \"" "%s \n"% str(result))
