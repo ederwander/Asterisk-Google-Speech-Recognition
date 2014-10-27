@@ -41,7 +41,7 @@ Lang="pt-BR"
 #url = 'https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang='+Lang
 
 #NOw for google speech V2
-url='https://www.google.com/speech-api/v2/recognize?output=json&key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw&lang=+Lang'
+url='https://www.google.com/speech-api/v2/recognize?output=json&key=AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw&lang='+Lang
 
 
 silence=True
