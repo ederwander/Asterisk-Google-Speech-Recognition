@@ -9,7 +9,7 @@
 # the GNU General Public License Version 2. See the COPYING file
 # at the top of the source tree.
 #
-#Revision 0.2
+#Revision 0.3
 #History:
 #18/01/2012 bug fix in local variable declaration
 #19/01/2012 suport for old python interpretator
