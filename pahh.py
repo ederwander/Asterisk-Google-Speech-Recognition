@@ -38,7 +38,7 @@ Lang="pt-BR"
 #or for English Speech Recognizer
 #Lang="en-US"
 
-#olg google speech V1 not working
+#Old google speech V1 not working
 #url = 'https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang='+Lang
 
 #NOw for google speech V2
